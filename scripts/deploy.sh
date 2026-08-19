@@ -7,9 +7,9 @@ set -euo pipefail
 
 IDENTITY="${1:-underwrite-admin}"
 NETWORK="testnet"
-WASM_PATH="target/wasm32-unknown-unknown/release/agent_registry.wasm"
+WASM_PATH="target/wasm32v1-none/release/agent_registry.wasm"
 
-echo "Building agent-registry (release, wasm32-unknown-unknown)..."
+echo "Building agent-registry (release, wasm32v1-none)..."
 stellar contract build
 
 echo "Deploying to $NETWORK as '$IDENTITY'..."
