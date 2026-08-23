@@ -3,3 +3,4 @@
 *.env
 .env
 .env.local
+test_snapshots/
