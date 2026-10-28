@@ -1,51 +1,45 @@
-# underwrite-contract
+# Underwrite Agent Registry
 
-`agent-registry` — the Soroban contract that tracks which verification
-agents TrusTrove's Invoice contract trusts.
+[![CI](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml)
+![Network: Stellar testnet](https://img.shields.io/badge/network-Stellar%20testnet-7B61FF)
+![Rust 2021](https://img.shields.io/badge/Rust-2021-DEA584?logo=rust)
+![Soroban SDK 27.0.6](https://img.shields.io/badge/Soroban%20SDK-27.0.6-4B4BFF)
 
-## Deployed (Stellar testnet)
+Underwrite is an invoice verification layer for Stellar. A verification agent checks an invoice, signs a risk signal, and posts it to a Soroban registry. TrusTrove lists an invoice for financing only if a valid attestation exists. This repository contains the agent registry that stores each approved agent's secp256k1 public key and active status.
 
-```
-AGENT_REGISTRY_CONTRACT=CB22R3OJUCQGHZCXH5WAONTURVMSGDIDGIGXA2XQ6UNXDUKYWZKVTER5
-```
+Testnet only. Unaudited. No mainnet deployment exists. End-to-end flow: in progress.
 
-Admin address: `GAJDJSR2NSIFXVQYP2DULXENALX4276NZHF2WCUCDJQFSO2N7DGI6JFF`
+## How the repositories fit together
 
-Hand `AGENT_REGISTRY_CONTRACT` to `underwrite-app` and to TrusTrove's
-Invoice contract config.
+| Repository | Role |
+| --- | --- |
+| [`UnderWrite-contract`](https://github.com/UnderWritex402/UnderWrite-contract) | Soroban agent registry in this repository. |
+| [`UnderWrite-app`](https://github.com/UnderWritex402/UnderWrite-app) | Off-chain invoice verification agent and attestation client. |
+| [`TrusTrove-contract`](https://github.com/TrusTrove/TrusTrove-contract) | Invoice contract that calls the registry through `submit_attestation`. |
 
-## Development
+All three repositories are needed for the full flow.
 
-```sh
-# build the contract wasm
-stellar contract build
-
-# run the test suite
-cargo test
-
-# deploy + initialize on testnet
-./scripts/deploy.sh
-
-# smoke test: register an agent and read it back
-./scripts/verify.sh <contract-id> <agent-id> <pubkey-hex-65-bytes>
+```mermaid
+flowchart LR
+    A[Underwrite agent] -->|signed risk signal| T[TrusTrove Invoice]
+    T -->|get_agent| R[Underwrite registry]
+    T -->|valid attestation| L[listing gate]
 ```
 
-> Note (Windows): `cargo test` and `stellar contract build` should be run
-> from WSL (or another Linux/macOS environment) rather than natively on
-> Windows. The GNU toolchain hits a PE export-ordinal limit building
-> soroban's dependency graph as a `cdylib`, and no MSVC linker is
-> installed in this environment. Both commands work cleanly under WSL
-> against the same repo via `/mnt/c/...`.
+## Testnet deployment
 
-## Contract interface
+| Component | Network | Contract ID | Status |
+| --- | --- | --- | --- |
+| Agent registry | Stellar testnet | [`CB22R3OJUCQGHZCXH5WAONTURVMSGDIDGIGXA2XQ6UNXDUKYWZKVTER5`](https://stellar.expert/explorer/testnet/contract/CB22R3OJUCQGHZCXH5WAONTURVMSGDIDGIGXA2XQ6UNXDUKYWZKVTER5) | Contract instance resolved on testnet. |
 
-```rust
-fn initialize(env: Env, admin: Address);
-fn register_agent(env: Env, admin: Address, agent_id: Symbol, pubkey: BytesN<65>);
-fn revoke_agent(env: Env, admin: Address, agent_id: Symbol);
-fn get_agent(env: Env, agent_id: Symbol) -> Option<AgentInfo>;
-```
+The registered agent ID `underwrite_v1` was confirmed active with a read-only `get_agent` simulation.
 
-`register_agent` and `revoke_agent` are admin-only (`require_auth`).
-`get_agent` is unauthenticated — this is what TrusTrove's Invoice
-contract calls to check a signer's trust status.
+## Maintainers
+
+| Name | Role | GitHub | Telegram |
+| --- | --- | --- | --- |
+| `{{NAME}}` | Maintainer | `{{GITHUB}}` | `{{TELEGRAM}}` |
+
+Community: `{{COMMUNITY_LINK}}`
+
+Demo video: `{{DEMO_VIDEO_URL}}`
