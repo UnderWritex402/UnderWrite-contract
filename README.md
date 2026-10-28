@@ -43,3 +43,34 @@ The registered agent ID `underwrite_v1` was confirmed active with a read-only `g
 Community: `{{COMMUNITY_LINK}}`
 
 Demo video: `{{DEMO_VIDEO_URL}}`
+
+## Quick Start
+
+Prerequisite: a stable Rust toolchain.
+
+```bash
+git clone https://github.com/UnderWritex402/UnderWrite-contract.git
+cd UnderWrite-contract
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets
+cargo test --workspace
+```
+
+The current test suite has 7 tests. The commands above were checked from a fresh clone.
+
+## Contract interface
+
+| Function | Parameters | Return | Authorization and errors |
+| --- | --- | --- | --- |
+| `initialize` | `admin: Address` | `()` | Callable once. A second call panics with `AlreadyInitialized`. |
+| `register_agent` | `admin: Address`, `agent_id: Symbol`, `pubkey: BytesN<65>` | `()` | Requires `admin` authorization and the stored admin address. Panics with `NotInitialized` or `Unauthorized`. |
+| `revoke_agent` | `admin: Address`, `agent_id: Symbol` | `()` | Requires `admin` authorization. Panics with `NotInitialized` for a missing agent or admin and `Unauthorized` for the wrong admin. |
+| `get_agent` | `agent_id: Symbol` | `Option<AgentInfo>` | Public read. Returns `None` for an unknown agent. |
+
+`AgentInfo` contains `pubkey: BytesN<65>` and `active: bool`. Registration writes an active record. Revocation keeps the record and sets `active` to `false`. Agent records use persistent storage and extend their TTL on registration or revocation.
+
+## Security and license
+
+Read [SECURITY.md](SECURITY.md) before reporting a vulnerability. Audit status: unaudited.
+
+No `LICENSE` file is present. The repository owner must select a license before contributors can rely on reuse terms.
