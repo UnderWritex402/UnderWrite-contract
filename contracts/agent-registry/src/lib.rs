@@ -41,11 +41,9 @@ impl AgentRegistry {
             active: true,
         };
         env.storage().persistent().set(&key, &info);
-        env.storage().persistent().extend_ttl(
-            &key,
-            AGENT_TTL_THRESHOLD,
-            AGENT_TTL_EXTEND_TO,
-        );
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, AGENT_TTL_THRESHOLD, AGENT_TTL_EXTEND_TO);
 
         events::agent_registered(&env, agent_id, pubkey);
     }
@@ -64,11 +62,9 @@ impl AgentRegistry {
 
         info.active = false;
         env.storage().persistent().set(&key, &info);
-        env.storage().persistent().extend_ttl(
-            &key,
-            AGENT_TTL_THRESHOLD,
-            AGENT_TTL_EXTEND_TO,
-        );
+        env.storage()
+            .persistent()
+            .extend_ttl(&key, AGENT_TTL_THRESHOLD, AGENT_TTL_EXTEND_TO);
 
         events::agent_revoked(&env, agent_id);
     }
