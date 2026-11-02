@@ -63,6 +63,21 @@ The current test suite has 7 tests. The commands above were checked from a fresh
 | `revoke_agent` | `admin: Address`, `agent_id: Symbol` | `()` | Requires `admin` authorization. Panics with `NotInitialized` for a missing agent or admin and `Unauthorized` for the wrong admin. |
 | `get_agent` | `agent_id: Symbol` | `Option<AgentInfo>` | Public read. Returns `None` for an unknown agent. |
 
+
+### Storage TTL assumptions
+
+The TTL constants in `contracts/agent-registry/src/lib.rs` are counted in ledgers. They assume a 5-second ledger close time, which gives 17,280 ledgers per day:
+
+| Constant | Value in code | Ledgers | Approximate time |
+| --- | --- | --- | --- |
+| `AGENT_TTL_THRESHOLD` | `17_280 * 30` | 518,400 | ~30 days |
+| `AGENT_TTL_EXTEND_TO` | `17_280 * 365` | 6,307,200 | ~365 days |
+
+If the network closes ledgers faster or slower than every 5 seconds, the real time changes to match.
+
+An agent record's TTL is extended only in `register_agent` and `revoke_agent`, right after the record is written. Each call runs `extend_ttl(&key, AGENT_TTL_THRESHOLD, AGENT_TTL_EXTEND_TO)`. This sets the TTL to ~365 days only when the remaining TTL is below ~30 days. If more TTL is left, the call leaves it unchanged. `get_agent` and other reads do not refresh the TTL. An agent that is only read, for example by TrusTrove during `submit_attestation`, still counts down to expiry. With no further admin writes, a record can expire about 365 days after its last extension.
+
+Operational consequence: once an approved agent record expires, `get_agent` can no longer return it until the entry is restored or the agent is registered again. TrusTrove then cannot confirm the agent as active, its attestations stop satisfying the listing gate, and invoices that rely on that agent cannot be listed. Operators should watch the remaining TTL of each active agent record. Before it expires, they should restore it or extend it, for example by calling `register_agent` again with the same public key.
 `AgentInfo` contains `pubkey: BytesN<65>` and `active: bool`. Registration writes an active record. Revocation keeps the record and sets `active` to `false`. Agent records use persistent storage and extend their TTL on registration or revocation.
 
 ## Security and license
