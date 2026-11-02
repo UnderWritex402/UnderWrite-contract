@@ -1,6 +1,7 @@
 # Underwrite Agent Registry
 
 [![CI](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 ![Network: Stellar testnet](https://img.shields.io/badge/network-Stellar%20testnet-7B61FF)
 ![Rust 2021](https://img.shields.io/badge/Rust-2021-DEA584?logo=rust)
 ![Soroban SDK 27.0.6](https://img.shields.io/badge/Soroban%20SDK-27.0.6-4B4BFF)
@@ -69,7 +70,7 @@ The current test suite has 7 tests. The commands above were checked from a fresh
 
 Read [SECURITY.md](SECURITY.md) before reporting a vulnerability. Audit status: unaudited.
 
-No `LICENSE` file is present. The repository owner must select a license before contributors can rely on reuse terms.
+Licensed under the [Apache License 2.0](LICENSE).
 
 ## Contributing
 
