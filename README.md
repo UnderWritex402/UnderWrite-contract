@@ -1,11 +1,14 @@
 # Underwrite Agent Registry
 
 [![CI](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/UnderWritex402/UnderWrite-contract/actions/workflows/ci.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 ![Network: Stellar testnet](https://img.shields.io/badge/network-Stellar%20testnet-7B61FF)
 ![Rust 2021](https://img.shields.io/badge/Rust-2021-DEA584?logo=rust)
 ![Soroban SDK 27.0.6](https://img.shields.io/badge/Soroban%20SDK-27.0.6-4B4BFF)
 
 Underwrite is an invoice verification layer for Stellar. A verification agent checks an invoice, signs a risk signal, and posts it to a Soroban registry. TrusTrove lists an invoice for financing only if a valid attestation exists. This repository contains the agent registry that stores each approved agent's secp256k1 public key and active status.
+
+[Documentation](https://chusdrter.gitbook.io/underwrite/) · [Live agent service](https://underwrite-app-theta.vercel.app/) · [Stellar testnet contract](https://stellar.expert/explorer/testnet/contract/CB22R3OJUCQGHZCXH5WAONTURVMSGDIDGIGXA2XQ6UNXDUKYWZKVTER5)
 
 Testnet only. Unaudited. No mainnet deployment exists. End-to-end flow: in progress.
 
@@ -84,7 +87,7 @@ Operational consequence: once an approved agent record expires, `get_agent` can 
 
 Read [SECURITY.md](SECURITY.md) before reporting a vulnerability. Audit status: unaudited.
 
-No `LICENSE` file is present. The repository owner must select a license before contributors can rely on reuse terms.
+Licensed under the [Apache License 2.0](LICENSE).
 
 ## Contributing
 
